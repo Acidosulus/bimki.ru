@@ -25,10 +25,15 @@ class Good:
 		echo(style('Товар: ', fg='bright_yellow') + style(pc_good_link, fg='bright_white') + style('  Прайс:', fg='bright_cyan') + style(pc_price, fg='bright_green'))
 		ol.Get_HTML(pc_good_link)
 		soup = BS(ol.page_source, features='html5lib')
-		self.name = soup.find('h1').text.strip()
 
 		prices = soup.find_all('div',{'class':'ty-product-prices opt-list-bottom-line'})
-		self.price = prices[1].find('span',{'class':'ty-price-num'}).text.strip()
+		self.price = prices[1].find('span',{'class':'ty-price-num'}).text.replace(' ','').strip()
+
+		if 'Товары в комплекте' in ol.page_source:
+			echo(style('Товары в комплекте', fg='red') + style(' ПРОПУСК', fg='bright_red'))
+			self.price = '0'
+
+		self.name = soup.find('h1').text.strip()
 
 		pictures = soup.find('div',{'class':'ty-product-img cm-preview-wrapper'}).find_all('img')
 		for picture in pictures:
@@ -43,14 +48,21 @@ class Good:
 		except: pass
 		self.description = reduce(self.description).replace(chr(10),' ').strip()
 
-		table = soup.find('table',{'class':'hidden'}).find_all('tr')
-		for element in table:
-			sections = element.find_all('td')
-			lc_color = (reduce(prepare_str(sections[0].text)).strip()+'|').replace(',|','').replace('|','')
-			lc_remain = reduce(prepare_str(sections[1].text)).strip()
-			if int(lc_remain)!=0:
-				append_if_not_exists(lc_color + '  Остаток: ' + lc_remain +' шт.', self.sizes)
-			
+		try:
+			table = soup.find('table',{'class':'hidden'}).find_all('tr')
+			for element in table:
+				sections = element.find_all('td')
+				lc_color = (reduce(prepare_str(sections[0].text)).strip()+'|').replace(',|','').replace('|','')
+				lc_remain = reduce(prepare_str(sections[1].text)).strip()
+				if int(lc_remain)!=0:
+					append_if_not_exists(lc_color + '  Остаток: ' + lc_remain +' шт.', self.sizes)
+		except ValueError as ve:
+			spans = soup.find_all('span',{'class':'ty-price'})
+			for span in spans:
+				if 'оптом поштучно' in span.text:
+					self.price = span.find('span',{'class':'ty-price-num'}).text.replace(' ','').strip()
+					lc_remain = reduce(soup.find('span',{'class':'ty-qty-in-stock ty-control-group__item'}).text.replace(u'\xa0',' ').replace('\t','')).strip()
+					append_if_not_exists('  Остаток: ' + lc_remain, self.sizes)
 
 
 		return

@@ -50,15 +50,16 @@ if sys.argv[1] == 'catalog':
             continue
         lo_good = unload_one_good(wd, link, sys.argv[3])
         lc_name = lo_good.name if lo_good.name.count(lo_good.article) != 0 else lo_good.article + ' ' + lo_good.name
-        price.add_good('',
-                                prepare_str(lc_name),
-                                prepare_str(lo_good.description),
-                                prepare_str( str(round(float(lo_good.price.replace(',', '.').replace(' ', ''))*float(sys.argv[4]), 2))),
-                                '15',
-                                prepare_str(link),
-                                prepare_for_csv_non_list(lo_good.pictures),
-                                prepare_for_csv_list(lo_good.sizes))
-        price.write_to_csv(sys.argv[3])
+        if int(str(round(float(lo_good.price.replace(',', '.').replace(u'\xa0', ' ').replace(' ', ''))*float(sys.argv[4]), 2)))!=0:
+            price.add_good('',
+                                    prepare_str(lc_name),
+                                    prepare_str(lo_good.description),
+                                    prepare_str( str(round(float(lo_good.price.replace(',', '.').replace(u'\xa0', ' ').replace(' ', ''))*float(sys.argv[4]), 2))),
+                                    '15',
+                                    prepare_str(link),
+                                    prepare_for_csv_non_list(lo_good.pictures),
+                                    prepare_for_csv_list(lo_good.sizes))
+            price.write_to_csv(sys.argv[3])
 
 if sys.argv[1] == 'reverse':
     reverse_csv_price(sys.argv[2])
