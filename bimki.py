@@ -49,8 +49,11 @@ if sys.argv[1] == 'catalog':
             print('Товар уже имеется в прайсе')
             continue
         lo_good = unload_one_good(wd, link, sys.argv[3])
+        if lo_good.price==0:
+            print('Нулевая цена, пропуск товаров')
+            continue
         lc_name = lo_good.name if lo_good.name.count(lo_good.article) != 0 else lo_good.article + ' ' + lo_good.name
-        if int(str(round(float(lo_good.price.replace(',', '.').replace(u'\xa0', ' ').replace(' ', ''))*float(sys.argv[4]), 2)))!=0:
+        if int(float(str(round(float(lo_good.price.replace(',', '.').replace(u'\xa0', ' ').replace(' ', ''))*float(sys.argv[4]), 2))))!=0:
             price.add_good('',
                                     prepare_str(lc_name),
                                     prepare_str(lo_good.description),

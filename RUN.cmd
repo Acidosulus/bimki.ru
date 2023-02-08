@@ -1,0 +1,12 @@
+call Aksessuary.cmd
+call Devochki.cmd
+call Malchiki.cmd
+call Malysham.cmd
+call Naryadnaya_odejda.cmd
+call Obuv_sale.cmd
+call Ryukzaki_sale.cmd
+call Sale.cmd
+call Shapki.cmd
+call Shkola.cmd
+call Sportivnaya_odejda.cmd
+call Verhnyaya_odejda.cmd

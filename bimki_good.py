@@ -27,7 +27,9 @@ class Good:
 		soup = BS(ol.page_source, features='html5lib')
 
 		prices = soup.find_all('div',{'class':'ty-product-prices opt-list-bottom-line'})
-		self.price = prices[1].find('span',{'class':'ty-price-num'}).text.replace(' ','').strip()
+		try:
+			self.price = prices[1].find('span',{'class':'ty-price-num'}).text.replace(' ','').strip()
+		except: self.price = 0
 
 		if 'Товары в комплекте' in ol.page_source:
 			echo(style('Товары в комплекте', fg='red') + style(' ПРОПУСК', fg='bright_red'))
